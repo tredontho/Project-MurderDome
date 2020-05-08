@@ -1,4 +1,3 @@
-(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 //Example control
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -94,48 +93,4 @@ class Player {
 }
 exports.Player = Player;
 Player._playerActions = ["attack", "defend", "move", "follow", "rest", "wait"];
-
-},{}],2:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Player_1 = require("../classes/Player");
-//let _testControl: testControl = new testControl();
-let players = [];
-/**
- * Sets all the HTML Elements in _data.
- */
-function populateDOMElementVariables() {
-    //_testControl.setInputElement(document.getElementById("TestSelect") as HTMLSelectElement);
-    //_testControl.setOutputElement(document.getElementById("Output") as HTMLDivElement);
-    players.push(new Player_1.Player(document.getElementById("Player1"), "Player1"));
-    players.push(new Player_1.Player(document.getElementById("Player2"), "Player2"));
-    players.push(new Player_1.Player(document.getElementById("Player3"), "Player3"));
-    players.push(new Player_1.Player(document.getElementById("Player4"), "Player4"));
-    players.push(new Player_1.Player(document.getElementById("Player5"), "Player5"));
-    players.push(new Player_1.Player(document.getElementById("Player6"), "Player6"));
-    players.push(new Player_1.Player(document.getElementById("Player7"), "Player7"));
-    players.push(new Player_1.Player(document.getElementById("Player8"), "Player8"));
-    return;
-}
-/**
- * Adds listeners to the 'change' events of the input fields and the 'click' event of the button.
- */
-function setUpInputBindings() {
-    //Called when setting the input field
-    //_data.attachChangeEventHandler();
-    return;
-}
-/**
- * initializes _data and the page for use.
- */
-function init() {
-    populateDOMElementVariables();
-    setUpInputBindings();
-    return;
-}
-window.onload = function () {
-    init();
-    return;
-};
-
-},{"../classes/Player":1}]},{},[2]);
+//# sourceMappingURL=Player.js.map

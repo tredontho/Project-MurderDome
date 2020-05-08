@@ -6,9 +6,6 @@ export class testControl {
     private _outputElement: HTMLDivElement;
     private _changeEventHandler: EventListener;
 
-    public name: string;
-    public index: number;
-
     constructor(input?: HTMLSelectElement, output?: HTMLDivElement, handler?: EventListener) {
 
         this.setChangeEventHandler(handler);
