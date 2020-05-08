@@ -78,6 +78,9 @@
     <None Include="src\scripts\testScript.ts">
       <SubType>Code</SubType>
     </None>
+    <TypeScriptCompile Include="src\classes\Player.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="src\types\types.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
