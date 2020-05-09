@@ -15,9 +15,9 @@
     //</div>
 
 
-export class Player {
+import { Action } from './Action.js';
 
-    private static _playerActions: string[] = ["attack", "defend", "move", "follow", "rest", "wait"];
+export class Player {
 
     private _parent: HTMLDivElement;
     private _container: HTMLDivElement;
@@ -58,8 +58,8 @@ export class Player {
         let select: HTMLSelectElement = document.createElement('select');
         select.setAttribute('name', this.name);
 
-        for (let i=0; i < Player._playerActions.length; i++) {
-            select.appendChild(this._createOption(Player._playerActions[i]));
+        for (let i=0; i < Action._playerActions.length; i++) {
+            select.appendChild(this._createOption(Action._playerActions[i]));
         }
         this.setInputElement(select);
 
