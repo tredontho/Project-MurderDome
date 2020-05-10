@@ -1,32 +1,24 @@
 "use strict";
 //Example control
 Object.defineProperty(exports, "__esModule", { value: true });
-//<div>
-//  <label for= "Player1" > Player 1 < /label>
-//  < select name = "Player1" id = "TestSelect" >
-//      <option value="" > --Please choose an option-- < /option>
-//      < option value = "attack" > Attack < /option>
-//      < option value = "defend" > Defend < /option>
-//      < option value = "move" > Move < /option>
-//      < option value = "follow" > Follow < /option>
-//      < option value = "rest" > Rest < /option>
-//      < option value = "wait" > Wait < /option>
-//  < /select>
-//  <div></div>
-//</div>
+const Action_js_1 = require("./Action.js");
 class Player {
     constructor(parent, playerName) {
         this._parent = parent;
+        this._parent.classList.add("PlayerControl");
         this._container = document.createElement("div");
+        this._container.classList.add("PlayerContainer");
+        this._selectedAction = undefined;
         this.name = playerName;
         this._container.appendChild(this._createLabel());
         this._container.appendChild(this._createSelect());
-        this._container.appendChild(this._createOutputDiv());
+        //this._container.appendChild(this._createOutputDiv());
         this._parent.appendChild(this._container);
         return;
     }
     _createLabel() {
         let label = document.createElement('label');
+        label.classList.add("PlayerLabel");
         label.setAttribute('for', this.name);
         label.innerText = this.name;
         return label;
@@ -34,8 +26,8 @@ class Player {
     _createSelect() {
         let select = document.createElement('select');
         select.setAttribute('name', this.name);
-        for (let i = 0; i < Player._playerActions.length; i++) {
-            select.appendChild(this._createOption(Player._playerActions[i]));
+        for (let i = 0; i < Action_js_1.Action._playerActions.length; i++) {
+            select.appendChild(this._createOption(Action_js_1.Action._playerActions[i]));
         }
         this.setInputElement(select);
         return select;
@@ -52,11 +44,14 @@ class Player {
         return output;
     }
     _defaultChangeEventHandler() {
-        //console.log(["Input", this._selectElement]);
-        //console.log(["Output", this._outputElement]);
-        if (this._selectElement && this._outputElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
+        if (this._selectElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
             let selectedOption = this._selectElement.options.item(this._selectElement.selectedIndex);
-            this._outputElement.innerHTML = selectedOption.value;
+            if (Action_js_1.Action.isValidAction(selectedOption.value)) {
+                this._selectedAction = selectedOption.value;
+            }
+            else {
+                this._selectedAction = undefined;
+            }
         }
         return;
     }
@@ -73,6 +68,17 @@ class Player {
     setInputElement(element, handler) {
         this._detachChangeEventHandler();
         this._selectElement = element;
+        if (this._selectedAction) {
+            if (this._selectElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
+                let selectedOption = this._selectElement.options.item(this._selectElement.selectedIndex);
+                if (Action_js_1.Action.isValidAction(selectedOption.value)) {
+                    this._selectedAction = selectedOption.value;
+                }
+                else {
+                    this._selectedAction = undefined;
+                }
+            }
+        }
         this.setChangeEventHandler(handler);
     }
     setOutputElement(element) {
@@ -90,7 +96,9 @@ class Player {
         }
         this._attachChangeEventHandler();
     }
+    getSelectedAction() {
+        return this._selectedAction;
+    }
 }
 exports.Player = Player;
-Player._playerActions = ["attack", "defend", "move", "follow", "rest", "wait"];
 //# sourceMappingURL=Player.js.map

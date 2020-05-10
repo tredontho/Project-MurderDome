@@ -1,38 +1,28 @@
-
-
-import { action } from '../types/types.js'
-
-export class Action {
-
-    static readonly _playerActions: string[] = ["attack", "defend", "move", "follow", "rest", "wait"];
-
-    private _priority: number;
-    private _action: string;
-
-    constructor(action: action) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class Action {
+    constructor(action) {
         this._action = action;
         this._setPriorityFromAction();
     }
-
-    private _setPriorityFromAction() {
-
+    _setPriorityFromAction() {
         switch (this._action) {
             case ("attack"):
                 this._priority = 1;
                 break;
-            case("defend"):
+            case ("defend"):
                 this._priority = 2;
                 break;
-            case("move"):
+            case ("move"):
                 this._priority = 3;
                 break;
-            case("follow"):
+            case ("follow"):
                 this._priority = 4;
                 break;
-            case("rest"):
+            case ("rest"):
                 this._priority = 5;
                 break;
-            case("wait"):
+            case ("wait"):
                 this._priority = 6;
                 break;
             default:
@@ -40,18 +30,11 @@ export class Action {
                 break;
         }
     }
-
-
-    public static comparator(a: Action, b: Action): boolean {
-
+    static comparator(a, b) {
         return a._priority < b._priority;
-
     }
-
-    public static isValidAction(action: string): boolean {
-
+    static isValidAction(action) {
         let isValid = false;
-
         switch (action) {
             case ("attack"):
             case ("defend"):
@@ -65,14 +48,9 @@ export class Action {
                 isValid = false;
                 break;
         }
-
         return isValid;
     }
-
-
 }
-
-
-
-
-
+exports.Action = Action;
+Action._playerActions = ["attack", "defend", "move", "follow", "rest", "wait"];
+//# sourceMappingURL=Action.js.map

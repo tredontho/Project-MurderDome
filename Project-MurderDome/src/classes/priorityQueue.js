@@ -65,4 +65,4 @@ class PriorityQueue {
     }
 }
 exports.PriorityQueue = PriorityQueue;
-//# sourceMappingURL=priorityQueue.js.map
+//# sourceMappingURL=PriorityQueue.js.map

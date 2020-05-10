@@ -14,7 +14,7 @@
     //  <div></div>
     //</div>
 
-
+import { action } from '../types/types.js';
 import { Action } from './Action.js';
 
 export class Player {
@@ -24,6 +24,7 @@ export class Player {
     private _selectElement: HTMLSelectElement;
     private _outputElement: HTMLDivElement;
     private _changeEventHandler: EventListener;
+    private _selectedAction: action;
 
     public name: string;
     public index: number;
@@ -31,12 +32,15 @@ export class Player {
     constructor(parent: HTMLDivElement, playerName: string) {
 
         this._parent = parent;
+        this._parent.classList.add("PlayerControl");
         this._container = document.createElement("div");
+        this._container.classList.add("PlayerContainer");
+        this._selectedAction = undefined;
         this.name = playerName;
 
         this._container.appendChild(this._createLabel());
         this._container.appendChild(this._createSelect());
-        this._container.appendChild(this._createOutputDiv());
+        //this._container.appendChild(this._createOutputDiv());
 
         this._parent.appendChild(this._container);
 
@@ -47,6 +51,7 @@ export class Player {
     private _createLabel(): HTMLLabelElement {
 
         let label: HTMLLabelElement = document.createElement('label');
+        label.classList.add("PlayerLabel");
         label.setAttribute('for', this.name);
         label.innerText = this.name;
 
@@ -85,13 +90,16 @@ export class Player {
     }
 
     private _defaultChangeEventHandler(): void {
-        //console.log(["Input", this._selectElement]);
-        //console.log(["Output", this._outputElement]);
-        if (this._selectElement && this._outputElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
+
+        if (this._selectElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
 
             let selectedOption: HTMLOptionElement = this._selectElement.options.item(this._selectElement.selectedIndex);
 
-            this._outputElement.innerHTML = selectedOption.value;
+            if (Action.isValidAction(selectedOption.value)) {
+                this._selectedAction = selectedOption.value as action;
+            } else {
+                this._selectedAction = undefined;
+            }
         }
         return
     }
@@ -111,6 +119,18 @@ export class Player {
     public setInputElement(element: HTMLSelectElement, handler?: EventListener): void {
         this._detachChangeEventHandler();
         this._selectElement = element;
+        if (this._selectedAction) {
+            if (this._selectElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
+
+                let selectedOption: HTMLOptionElement = this._selectElement.options.item(this._selectElement.selectedIndex);
+
+                if (Action.isValidAction(selectedOption.value)) {
+                    this._selectedAction = selectedOption.value as action;
+                } else {
+                    this._selectedAction = undefined;
+                }
+            }
+        }
         this.setChangeEventHandler(handler);
     }
 
@@ -128,5 +148,9 @@ export class Player {
             };
         }
         this._attachChangeEventHandler()
+    }
+
+    public getSelectedAction(): action {
+        return this._selectedAction;
     }
 }

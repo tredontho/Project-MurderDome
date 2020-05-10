@@ -1,18 +1,26 @@
 
 import { testControl } from '../classes/testControl';
 import { Player } from '../classes/Player';
+import { PriorityQueue } from '../classes/PriorityQueue';
 
 
 //let _testControl: testControl = new testControl();
 let players: Player[] = []
 
+let enterBtn: HTMLButtonElement;
+let output: HTMLDivElement;
+
+function enterBtnClickHandler() {
+
+    //
+
+
+}
+
 /**
  * Sets all the HTML Elements in _data.
  */
 function populateDOMElementVariables() {
-
-    //_testControl.setInputElement(document.getElementById("TestSelect") as HTMLSelectElement);
-    //_testControl.setOutputElement(document.getElementById("Output") as HTMLDivElement);
 
     players.push(new Player(document.getElementById("Player1") as HTMLDivElement, "Player1"));
     players.push(new Player(document.getElementById("Player2") as HTMLDivElement, "Player2"));
@@ -23,6 +31,9 @@ function populateDOMElementVariables() {
     players.push(new Player(document.getElementById("Player7") as HTMLDivElement, "Player7"));
     players.push(new Player(document.getElementById("Player8") as HTMLDivElement, "Player8"));
 
+    enterBtn = document.getElementById("EnterBtn") as HTMLButtonElement;
+    output = document.getElementById("Output") as HTMLDivElement;
+
     return;
 }
 
@@ -31,8 +42,7 @@ function populateDOMElementVariables() {
  */
 function setUpInputBindings() {
 
-    //Called when setting the input field
-    //_data.attachChangeEventHandler();
+    enterBtn.addEventListener("click", enterBtnClickHandler);
 
     return;
 }

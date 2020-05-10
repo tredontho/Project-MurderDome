@@ -34,6 +34,9 @@
     <None Include="app.ts" />
     <None Include="routes\index.ts" />
     <None Include="routes\user.ts" />
+    <Content Include="public\stylesheets\testStyle.css">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="tsconfig.json" />
     <Content Include="package.json" />
     <Content Include="public\stylesheets\main.css" />
@@ -58,7 +61,8 @@
     <Folder Include="views\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\classes\priorityQueue.ts">
+    <TypeScriptCompile Include="src\classes\Action.ts" />
+    <TypeScriptCompile Include="src\classes\PriorityQueue.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\classes\testControl.ts">

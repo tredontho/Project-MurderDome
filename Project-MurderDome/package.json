@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "tsc --build && browserify ./src/scripts/testScript.js -o ./src/scripts/bundle.js",
+    "build": "tsc --build && browserify ./src/scripts/testScript.js -o ./public/javascripts/bundle.js",
     "clean": "tsc --build --clean",
     "start": "node app"
   },
