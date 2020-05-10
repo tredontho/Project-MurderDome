@@ -19,30 +19,28 @@ import { Action } from './Action.js';
 
 export class Player {
 
-    private _parent: HTMLDivElement;
+    readonly parent: HTMLDivElement;
+    readonly name: string;
+
     private _container: HTMLDivElement;
     private _selectElement: HTMLSelectElement;
-    private _outputElement: HTMLDivElement;
     private _changeEventHandler: EventListener;
-    private _selectedAction: action;
+    private _selectedAction: Action;
 
-    public name: string;
-    public index: number;
+    constructor(parentElement: HTMLDivElement, playerName: string) {
 
-    constructor(parent: HTMLDivElement, playerName: string) {
+        this.parent = parentElement;
+        this.name = playerName;
 
-        this._parent = parent;
-        this._parent.classList.add("PlayerControl");
+        this.parent.classList.add("PlayerControl");
+
         this._container = document.createElement("div");
         this._container.classList.add("PlayerContainer");
-        this._selectedAction = undefined;
-        this.name = playerName;
 
         this._container.appendChild(this._createLabel());
         this._container.appendChild(this._createSelect());
-        //this._container.appendChild(this._createOutputDiv());
 
-        this._parent.appendChild(this._container);
+        this.parent.appendChild(this._container);
 
         return
     }
@@ -63,10 +61,14 @@ export class Player {
         let select: HTMLSelectElement = document.createElement('select');
         select.setAttribute('name', this.name);
 
-        for (let i=0; i < Action._playerActions.length; i++) {
-            select.appendChild(this._createOption(Action._playerActions[i]));
-        }
-        this.setInputElement(select);
+        Action.playerActions.forEach((action) => {
+            select.appendChild(this._createOption(action));
+        });
+
+        this._selectElement = select;
+        this._changeEventHandler = () => { this._setSelectedAction(); };
+        this._selectElement.addEventListener("change", this._changeEventHandler);
+        this._setSelectedAction();
 
         return select;
     }
@@ -80,23 +82,14 @@ export class Player {
         return option;
     }
 
-    private _createOutputDiv(): HTMLDivElement {
-
-        let output: HTMLDivElement = document.createElement('div');
-
-        this.setOutputElement(output)
-
-        return output;
-    }
-
-    private _defaultChangeEventHandler(): void {
+    private _setSelectedAction(): void {
 
         if (this._selectElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
 
             let selectedOption: HTMLOptionElement = this._selectElement.options.item(this._selectElement.selectedIndex);
 
             if (Action.isValidAction(selectedOption.value)) {
-                this._selectedAction = selectedOption.value as action;
+                this._selectedAction = new Action(selectedOption.value as action, this.name);
             } else {
                 this._selectedAction = undefined;
             }
@@ -104,53 +97,19 @@ export class Player {
         return
     }
 
-    private _attachChangeEventHandler(): void {
-        if (this._selectElement && this._changeEventHandler) {
-            this._selectElement.addEventListener("change", this._changeEventHandler);
-        }
-    }
+    //private _attachChangeEventHandler(): void {
+    //    if (this._selectElement && this._changeEventHandler) {
+    //        this._selectElement.addEventListener("change", this._changeEventHandler);
+    //    }
+    //}
 
-    private _detachChangeEventHandler(): void {
-        if (this._selectElement && this._changeEventHandler) {
-            this._selectElement.removeEventListener("change", this._changeEventHandler);
-        }
-    }
+    //private _detachChangeEventHandler(): void {
+    //    if (this._selectElement && this._changeEventHandler) {
+    //        this._selectElement.removeEventListener("change", this._changeEventHandler);
+    //    }
+    //}
 
-    public setInputElement(element: HTMLSelectElement, handler?: EventListener): void {
-        this._detachChangeEventHandler();
-        this._selectElement = element;
-        if (this._selectedAction) {
-            if (this._selectElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
-
-                let selectedOption: HTMLOptionElement = this._selectElement.options.item(this._selectElement.selectedIndex);
-
-                if (Action.isValidAction(selectedOption.value)) {
-                    this._selectedAction = selectedOption.value as action;
-                } else {
-                    this._selectedAction = undefined;
-                }
-            }
-        }
-        this.setChangeEventHandler(handler);
-    }
-
-    public setOutputElement(element: HTMLDivElement): void {
-        this._outputElement = element;
-    }
-
-    public setChangeEventHandler(handler?: EventListener): void {
-        this._detachChangeEventHandler()
-        if (handler) {
-            this._changeEventHandler = handler;
-        } else {
-            this._changeEventHandler = () => {
-                this._defaultChangeEventHandler();
-            };
-        }
-        this._attachChangeEventHandler()
-    }
-
-    public getSelectedAction(): action {
+    public getSelectedAction(): Action {
         return this._selectedAction;
     }
 }

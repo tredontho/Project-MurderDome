@@ -2,12 +2,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Action {
-    constructor(action) {
-        this._action = action;
+    constructor(action, doer) {
+        this.owner = doer;
+        this.action = action;
         this._setPriorityFromAction();
     }
     _setPriorityFromAction() {
-        switch (this._action) {
+        switch (this.action) {
             case ("attack"):
                 this._priority = 1;
                 break;
@@ -53,7 +54,7 @@ class Action {
     }
 }
 exports.Action = Action;
-Action._playerActions = ["attack", "defend", "move", "follow", "rest", "wait"];
+Action.playerActions = ["attack", "defend", "move", "follow", "rest", "wait"];
 
 },{}],2:[function(require,module,exports){
 "use strict";
@@ -61,17 +62,15 @@ Action._playerActions = ["attack", "defend", "move", "follow", "rest", "wait"];
 Object.defineProperty(exports, "__esModule", { value: true });
 const Action_js_1 = require("./Action.js");
 class Player {
-    constructor(parent, playerName) {
-        this._parent = parent;
-        this._parent.classList.add("PlayerControl");
+    constructor(parentElement, playerName) {
+        this.parent = parentElement;
+        this.name = playerName;
+        this.parent.classList.add("PlayerControl");
         this._container = document.createElement("div");
         this._container.classList.add("PlayerContainer");
-        this._selectedAction = undefined;
-        this.name = playerName;
         this._container.appendChild(this._createLabel());
         this._container.appendChild(this._createSelect());
-        //this._container.appendChild(this._createOutputDiv());
-        this._parent.appendChild(this._container);
+        this.parent.appendChild(this._container);
         return;
     }
     _createLabel() {
@@ -84,10 +83,13 @@ class Player {
     _createSelect() {
         let select = document.createElement('select');
         select.setAttribute('name', this.name);
-        for (let i = 0; i < Action_js_1.Action._playerActions.length; i++) {
-            select.appendChild(this._createOption(Action_js_1.Action._playerActions[i]));
-        }
-        this.setInputElement(select);
+        Action_js_1.Action.playerActions.forEach((action) => {
+            select.appendChild(this._createOption(action));
+        });
+        this._selectElement = select;
+        this._changeEventHandler = () => { this._setSelectedAction(); };
+        this._selectElement.addEventListener("change", this._changeEventHandler);
+        this._setSelectedAction();
         return select;
     }
     _createOption(action) {
@@ -96,16 +98,11 @@ class Player {
         option.innerText = action;
         return option;
     }
-    _createOutputDiv() {
-        let output = document.createElement('div');
-        this.setOutputElement(output);
-        return output;
-    }
-    _defaultChangeEventHandler() {
+    _setSelectedAction() {
         if (this._selectElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
             let selectedOption = this._selectElement.options.item(this._selectElement.selectedIndex);
             if (Action_js_1.Action.isValidAction(selectedOption.value)) {
-                this._selectedAction = selectedOption.value;
+                this._selectedAction = new Action_js_1.Action(selectedOption.value, this.name);
             }
             else {
                 this._selectedAction = undefined;
@@ -113,47 +110,16 @@ class Player {
         }
         return;
     }
-    _attachChangeEventHandler() {
-        if (this._selectElement && this._changeEventHandler) {
-            this._selectElement.addEventListener("change", this._changeEventHandler);
-        }
-    }
-    _detachChangeEventHandler() {
-        if (this._selectElement && this._changeEventHandler) {
-            this._selectElement.removeEventListener("change", this._changeEventHandler);
-        }
-    }
-    setInputElement(element, handler) {
-        this._detachChangeEventHandler();
-        this._selectElement = element;
-        if (this._selectedAction) {
-            if (this._selectElement && this._selectElement.selectedIndex != -1 && this._selectElement.options.length > 0) {
-                let selectedOption = this._selectElement.options.item(this._selectElement.selectedIndex);
-                if (Action_js_1.Action.isValidAction(selectedOption.value)) {
-                    this._selectedAction = selectedOption.value;
-                }
-                else {
-                    this._selectedAction = undefined;
-                }
-            }
-        }
-        this.setChangeEventHandler(handler);
-    }
-    setOutputElement(element) {
-        this._outputElement = element;
-    }
-    setChangeEventHandler(handler) {
-        this._detachChangeEventHandler();
-        if (handler) {
-            this._changeEventHandler = handler;
-        }
-        else {
-            this._changeEventHandler = () => {
-                this._defaultChangeEventHandler();
-            };
-        }
-        this._attachChangeEventHandler();
-    }
+    //private _attachChangeEventHandler(): void {
+    //    if (this._selectElement && this._changeEventHandler) {
+    //        this._selectElement.addEventListener("change", this._changeEventHandler);
+    //    }
+    //}
+    //private _detachChangeEventHandler(): void {
+    //    if (this._selectElement && this._changeEventHandler) {
+    //        this._selectElement.removeEventListener("change", this._changeEventHandler);
+    //    }
+    //}
     getSelectedAction() {
         return this._selectedAction;
     }
@@ -163,18 +129,101 @@ exports.Player = Player;
 },{"./Action.js":1}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+class PriorityQueue {
+    constructor(comparator = (a, b) => a > b) {
+        this._top = 0;
+        this._parent = i => ((i + 1) >>> 1) - 1;
+        this._left = i => (i << 1) + 1;
+        this._right = i => (i + 1) << 1;
+        this._heap = [];
+        this._comparator = comparator;
+    }
+    _greater(i, j) {
+        return this._comparator(this._heap[i], this._heap[j]);
+    }
+    _swap(i, j) {
+        [this._heap[i], this._heap[j]] = [this._heap[j], this._heap[i]];
+    }
+    _siftUp() {
+        let node = this.size() - 1;
+        while (node > this._top && this._greater(node, this._parent(node))) {
+            this._swap(node, this._parent(node));
+            node = this._parent(node);
+        }
+    }
+    _siftDown() {
+        let node = this._top;
+        while ((this._left(node) < this.size() && this._greater(this._left(node), node)) ||
+            (this._right(node) < this.size() && this._greater(this._right(node), node))) {
+            let maxChild = (this._right(node) < this.size() && this._greater(this._right(node), this._left(node))) ? this._right(node) : this._left(node);
+            this._swap(node, maxChild);
+            node = maxChild;
+        }
+    }
+    size() {
+        return this._heap.length;
+    }
+    isEmpty() {
+        return this.size() == 0;
+    }
+    peek() {
+        return this._heap[this._top];
+    }
+    push(...values) {
+        values.forEach(value => {
+            this._heap.push(value);
+            this._siftUp();
+        });
+        return this.size();
+    }
+    pop() {
+        const poppedValue = this.peek();
+        const bottom = this.size() - 1;
+        if (bottom > this._top) {
+            this._swap(top, bottom);
+        }
+        this._heap.pop();
+        this._siftDown();
+        return poppedValue;
+    }
+    replace(value) {
+        const replacedValue = this.peek();
+        this._heap[this._top] = value;
+        this._siftDown();
+        return replacedValue;
+    }
+}
+exports.PriorityQueue = PriorityQueue;
+
+},{}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Player_1 = require("../classes/Player");
-//let _testControl: testControl = new testControl();
+const Action_1 = require("../classes/Action");
+const PriorityQueue_1 = require("../classes/PriorityQueue");
 let players = [];
 let enterBtn;
 let output;
 function enterBtnClickHandler() {
-    //
+    let actions = new PriorityQueue_1.PriorityQueue(Action_1.Action.comparator);
+    players.forEach(function (player) {
+        actions.push(player.getSelectedAction());
+    });
+    console.log(actions);
+    /*
+    let actionLog: string = "";
+    while (!actions.isEmpty()) {
+        let curAction: Action = actions.pop();
+        console.log(curAction);
+        actionLog += curAction.owner + ": " + curAction.action + "<br/>";
+    }
+
+    console.log(actions);
+
+    output.innerHTML = actionLog;
+    */
 }
-/**
- * Sets all the HTML Elements in _data.
- */
-function populateDOMElementVariables() {
+function createPlayers() {
     players.push(new Player_1.Player(document.getElementById("Player1"), "Player1"));
     players.push(new Player_1.Player(document.getElementById("Player2"), "Player2"));
     players.push(new Player_1.Player(document.getElementById("Player3"), "Player3"));
@@ -183,23 +232,17 @@ function populateDOMElementVariables() {
     players.push(new Player_1.Player(document.getElementById("Player6"), "Player6"));
     players.push(new Player_1.Player(document.getElementById("Player7"), "Player7"));
     players.push(new Player_1.Player(document.getElementById("Player8"), "Player8"));
-    enterBtn = document.getElementById("EnterBtn");
-    output = document.getElementById("Output");
     return;
 }
-/**
- * Adds listeners to the 'change' events of the input fields and the 'click' event of the button.
- */
-function setUpInputBindings() {
+function setUpEnterBtn() {
+    enterBtn = document.getElementById("EnterBtn");
+    output = document.getElementById("Output");
     enterBtn.addEventListener("click", enterBtnClickHandler);
     return;
 }
-/**
- * initializes _data and the page for use.
- */
 function init() {
-    populateDOMElementVariables();
-    setUpInputBindings();
+    createPlayers();
+    setUpEnterBtn();
     return;
 }
 window.onload = function () {
@@ -207,4 +250,4 @@ window.onload = function () {
     return;
 };
 
-},{"../classes/Player":2}]},{},[3]);
+},{"../classes/Action":1,"../classes/Player":2,"../classes/PriorityQueue":3}]},{},[4]);

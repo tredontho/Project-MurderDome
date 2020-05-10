@@ -1,10 +1,8 @@
 
-import { testControl } from '../classes/testControl';
 import { Player } from '../classes/Player';
+import { Action } from '../classes/Action';
 import { PriorityQueue } from '../classes/PriorityQueue';
 
-
-//let _testControl: testControl = new testControl();
 let players: Player[] = []
 
 let enterBtn: HTMLButtonElement;
@@ -12,15 +10,30 @@ let output: HTMLDivElement;
 
 function enterBtnClickHandler() {
 
-    //
+    let actions: PriorityQueue = new PriorityQueue(Action.comparator);
 
+    players.forEach(function (player) {
+        actions.push(player.getSelectedAction());
+    });
+
+    console.log(actions);
+
+    //I think the priority queue needs some tweaking, pop is not working correctly I dont think
+    
+    let actionLog: string = "";
+    while (!actions.isEmpty()) {
+        let curAction: Action = actions.pop();
+        console.log(curAction);
+        actionLog += curAction.owner + ": " + curAction.action + "<br/>";
+    }
+
+    console.log(actions);
+
+    output.innerHTML = actionLog;
 
 }
 
-/**
- * Sets all the HTML Elements in _data.
- */
-function populateDOMElementVariables() {
+function createPlayers() {
 
     players.push(new Player(document.getElementById("Player1") as HTMLDivElement, "Player1"));
     players.push(new Player(document.getElementById("Player2") as HTMLDivElement, "Player2"));
@@ -31,28 +44,22 @@ function populateDOMElementVariables() {
     players.push(new Player(document.getElementById("Player7") as HTMLDivElement, "Player7"));
     players.push(new Player(document.getElementById("Player8") as HTMLDivElement, "Player8"));
 
-    enterBtn = document.getElementById("EnterBtn") as HTMLButtonElement;
-    output = document.getElementById("Output") as HTMLDivElement;
-
     return;
 }
 
-/**
- * Adds listeners to the 'change' events of the input fields and the 'click' event of the button.
- */
-function setUpInputBindings() {
+function setUpEnterBtn() {
+
+    enterBtn = document.getElementById("EnterBtn") as HTMLButtonElement;
+    output = document.getElementById("Output") as HTMLDivElement;
 
     enterBtn.addEventListener("click", enterBtnClickHandler);
 
     return;
 }
 
-/**
- * initializes _data and the page for use.
- */
 function init() {
-    populateDOMElementVariables();
-    setUpInputBindings();
+    createPlayers();
+    setUpEnterBtn();
 
     return;
 }

@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Action {
-    constructor(action) {
-        this._action = action;
+    constructor(action, doer) {
+        this.owner = doer;
+        this.action = action;
         this._setPriorityFromAction();
     }
     _setPriorityFromAction() {
-        switch (this._action) {
+        switch (this.action) {
             case ("attack"):
                 this._priority = 1;
                 break;
@@ -52,5 +53,5 @@ class Action {
     }
 }
 exports.Action = Action;
-Action._playerActions = ["attack", "defend", "move", "follow", "rest", "wait"];
+Action.playerActions = ["attack", "defend", "move", "follow", "rest", "wait"];
 //# sourceMappingURL=Action.js.map

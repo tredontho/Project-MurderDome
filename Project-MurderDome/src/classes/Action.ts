@@ -4,19 +4,22 @@ import { action } from '../types/types.js'
 
 export class Action {
 
-    static readonly _playerActions: string[] = ["attack", "defend", "move", "follow", "rest", "wait"];
+    static readonly playerActions: string[] = ["attack", "defend", "move", "follow", "rest", "wait"];
+
+    readonly owner: string;
+    readonly action: string;
 
     private _priority: number;
-    private _action: string;
 
-    constructor(action: action) {
-        this._action = action;
+    constructor(action: action, doer: string) {
+        this.owner = doer;
+        this.action = action;
         this._setPriorityFromAction();
     }
 
     private _setPriorityFromAction() {
 
-        switch (this._action) {
+        switch (this.action) {
             case ("attack"):
                 this._priority = 1;
                 break;
