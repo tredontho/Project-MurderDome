@@ -9,7 +9,7 @@ export class PriorityQueue {
     private _parent = i => ((i + 1) >>> 1) - 1;
     private _left = i => (i << 1) + 1;
     private _right = i => (i + 1) << 1;
-    private _heap: any[];
+    private _heap: Array<any>;
     private _comparator: comparator;
 
     constructor(comparator: comparator = (a, b) => a > b) {
@@ -22,7 +22,11 @@ export class PriorityQueue {
     }
 
     private _swap(i, j) {
+        console.log(this._heap[i]);
+        console.log(this._heap[j]);
         [this._heap[i], this._heap[j]] = [this._heap[j], this._heap[i]];
+        console.log(this._heap[i]);
+        console.log(this._heap[j]);
     }
 
     private _siftUp() {
@@ -69,10 +73,19 @@ export class PriorityQueue {
         const poppedValue = this.peek();
         const bottom = this.size() - 1;
         if (bottom > this._top) {
-            this._swap(top, bottom);
+            //this._swap(top, bottom);
         }
-        this._heap.pop();
-        this._siftDown();
+        console.log(this._heap);
+        console.log(this._top);
+        console.log(bottom);
+        console.log(this._heap[this._top]);
+        console.log(this._heap[bottom]);
+        console.log(this._heap.length);
+        //this._heap.pop();
+        //console.log(this._heap.length);
+        //this._siftDown();
+        //console.log(this._heap[this._top]);
+        //console.log(this._heap[bottom]);
         return poppedValue;
     }
 

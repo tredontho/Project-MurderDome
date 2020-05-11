@@ -34,6 +34,7 @@
     <None Include="app.ts" />
     <None Include="routes\index.ts" />
     <None Include="routes\user.ts" />
+    <Content Include="public\javascripts\bundle.js" />
     <Content Include="public\stylesheets\testStyle.css">
       <SubType>Code</SubType>
     </Content>

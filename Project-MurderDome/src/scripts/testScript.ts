@@ -7,29 +7,39 @@ let players: Player[] = []
 
 let enterBtn: HTMLButtonElement;
 let output: HTMLDivElement;
+let actionsList: PriorityQueue;
 
 function enterBtnClickHandler() {
 
-    let actions: PriorityQueue = new PriorityQueue(Action.comparator);
+    actionsList = new PriorityQueue(Action.comparator);
 
-    players.forEach(function (player) {
-        actions.push(player.getSelectedAction());
+    console.log(actionsList);
+
+    players.forEach(function (player, index) {
+        actionsList.push(player.getSelectedAction());
     });
 
-    console.log(actions);
+    //console.log(actionsList);
 
-    //I think the priority queue needs some tweaking, pop is not working correctly I dont think
-    
-    let actionLog: string = "";
-    while (!actions.isEmpty()) {
-        let curAction: Action = actions.pop();
-        console.log(curAction);
-        actionLog += curAction.owner + ": " + curAction.action + "<br/>";
-    }
 
-    console.log(actions);
+    actionsList.pop();
+    //console.log(actionsList.pop());
+    //console.log(actionsList.pop());
 
-    output.innerHTML = actionLog;
+
+    //console.log(actionsList);
+
+    //let actionLog: string = "";
+    //while (!actions.isEmpty()) {
+
+    //    console.log(actions.pop());
+    //    //let curAction: Action = actions.pop();
+    //    //console.log(curAction);
+    //    //actionLog += curAction.owner + ": " + curAction.action + "<br/>";
+    //}
+
+
+//    output.innerHTML = actionLog;
 
 }
 
@@ -41,8 +51,8 @@ function createPlayers() {
     players.push(new Player(document.getElementById("Player4") as HTMLDivElement, "Player4"));
     players.push(new Player(document.getElementById("Player5") as HTMLDivElement, "Player5"));
     players.push(new Player(document.getElementById("Player6") as HTMLDivElement, "Player6"));
-    players.push(new Player(document.getElementById("Player7") as HTMLDivElement, "Player7"));
-    players.push(new Player(document.getElementById("Player8") as HTMLDivElement, "Player8"));
+    //players.push(new Player(document.getElementById("Player7") as HTMLDivElement, "Player7"));
+    //players.push(new Player(document.getElementById("Player8") as HTMLDivElement, "Player8"));
 
     return;
 }
