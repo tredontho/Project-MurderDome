@@ -7,39 +7,27 @@ let players: Player[] = []
 
 let enterBtn: HTMLButtonElement;
 let output: HTMLDivElement;
-let actionsList: PriorityQueue;
 
 function enterBtnClickHandler() {
 
-    actionsList = new PriorityQueue(Action.comparator);
+    let actionList: PriorityQueue = new PriorityQueue(Action.comparator);
 
-    console.log(actionsList);
-
+    console.log(JSON.parse(JSON.stringify(actionList)))
     players.forEach(function (player, index) {
-        actionsList.push(player.getSelectedAction());
+        actionList.push(player.getSelectedAction());
     });
+    console.log(JSON.parse(JSON.stringify(actionList)))
 
-    //console.log(actionsList);
+    let actionLog: string = "";
+    while (!actionList.isEmpty()) {
 
-
-    actionsList.pop();
-    //console.log(actionsList.pop());
-    //console.log(actionsList.pop());
-
-
-    //console.log(actionsList);
-
-    //let actionLog: string = "";
-    //while (!actions.isEmpty()) {
-
-    //    console.log(actions.pop());
-    //    //let curAction: Action = actions.pop();
-    //    //console.log(curAction);
-    //    //actionLog += curAction.owner + ": " + curAction.action + "<br/>";
-    //}
+        let curAction: Action = actionList.pop();
+        console.log(curAction);
+        actionLog += curAction.owner + ": " + curAction.action + "<br/>";
+    }
 
 
-//    output.innerHTML = actionLog;
+    output.innerHTML = actionLog;
 
 }
 

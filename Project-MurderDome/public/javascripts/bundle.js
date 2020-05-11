@@ -142,11 +142,7 @@ class PriorityQueue {
         return this._comparator(this._heap[i], this._heap[j]);
     }
     _swap(i, j) {
-        console.log(this._heap[i]);
-        console.log(this._heap[j]);
         [this._heap[i], this._heap[j]] = [this._heap[j], this._heap[i]];
-        console.log(this._heap[i]);
-        console.log(this._heap[j]);
     }
     _siftUp() {
         let node = this.size() - 1;
@@ -184,19 +180,10 @@ class PriorityQueue {
         const poppedValue = this.peek();
         const bottom = this.size() - 1;
         if (bottom > this._top) {
-            //this._swap(top, bottom);
+            this._swap(this._top, bottom);
         }
-        console.log(this._heap);
-        console.log(this._top);
-        console.log(bottom);
-        console.log(this._heap[this._top]);
-        console.log(this._heap[bottom]);
-        console.log(this._heap.length);
-        //this._heap.pop();
-        //console.log(this._heap.length);
-        //this._siftDown();
-        //console.log(this._heap[this._top]);
-        //console.log(this._heap[bottom]);
+        this._heap.pop();
+        this._siftDown();
         return poppedValue;
     }
     replace(value) {
@@ -217,26 +204,20 @@ const PriorityQueue_1 = require("../classes/PriorityQueue");
 let players = [];
 let enterBtn;
 let output;
-let actionsList;
 function enterBtnClickHandler() {
-    actionsList = new PriorityQueue_1.PriorityQueue(Action_1.Action.comparator);
-    console.log(actionsList);
+    let actionList = new PriorityQueue_1.PriorityQueue(Action_1.Action.comparator);
+    console.log(JSON.parse(JSON.stringify(actionList)));
     players.forEach(function (player, index) {
-        actionsList.push(player.getSelectedAction());
+        actionList.push(player.getSelectedAction());
     });
-    //console.log(actionsList);
-    actionsList.pop();
-    //console.log(actionsList.pop());
-    //console.log(actionsList.pop());
-    //console.log(actionsList);
-    //let actionLog: string = "";
-    //while (!actions.isEmpty()) {
-    //    console.log(actions.pop());
-    //    //let curAction: Action = actions.pop();
-    //    //console.log(curAction);
-    //    //actionLog += curAction.owner + ": " + curAction.action + "<br/>";
-    //}
-    //    output.innerHTML = actionLog;
+    console.log(JSON.parse(JSON.stringify(actionList)));
+    let actionLog = "";
+    while (!actionList.isEmpty()) {
+        let curAction = actionList.pop();
+        console.log(curAction);
+        actionLog += curAction.owner + ": " + curAction.action + "<br/>";
+    }
+    output.innerHTML = actionLog;
 }
 function createPlayers() {
     players.push(new Player_1.Player(document.getElementById("Player1"), "Player1"));
